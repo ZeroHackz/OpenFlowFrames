@@ -5,6 +5,7 @@ No GUI code in here; everything reports through a callback so it can run headles
 
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -58,10 +59,22 @@ class VideoInfo:
     fps: Fraction
     frame_count: int
     has_audio: bool
+    is_frames: bool = False  # input is a directory of images instead of a video
 
     @property
     def fps_float(self) -> float:
         return float(self.fps)
+
+
+IMG_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
+
+
+def list_frames(path: Path) -> list[Path]:
+    """Image files in a directory, naturally sorted (numeric filenames sort by value)."""
+    import re
+    def key(p: Path):
+        return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", p.stem)]
+    return sorted((p for p in path.iterdir() if p.suffix.lower() in IMG_EXTS), key=key)
 
 
 @dataclass
@@ -141,6 +154,16 @@ def probe(path: Path) -> VideoInfo:
     return VideoInfo(path, int(video["width"]), int(video["height"]), fps, frames, has_audio)
 
 
+def probe_image_dir(path: Path, fps: float) -> VideoInfo:
+    """Treat a directory of images as an input clip at the given framerate."""
+    frames = list_frames(path)
+    if not frames:
+        raise ValueError(f"No image files ({', '.join(sorted(IMG_EXTS))}) found in {path}")
+    first = probe(frames[0])  # ffprobe reads image dimensions too
+    return VideoInfo(path, first.width, first.height, Fraction(fps).limit_denominator(10000),
+                     len(frames), has_audio=False, is_frames=True)
+
+
 @dataclass
 class InterpolationJob:
     video: VideoInfo
@@ -148,6 +171,7 @@ class InterpolationJob:
     factor: int
     out_path: Path
     crf: int = 17
+    out_mode: str = "mp4"  # "mp4" or "png" (folder of interpolated frames)
     _cancel: threading.Event = field(default_factory=threading.Event)
 
     def cancel(self):
@@ -178,21 +202,25 @@ class InterpolationJob:
         v = self.video
         out_frames_expected = v.frame_count * self.factor
         with tempfile.TemporaryDirectory(prefix="openflowframes-") as tmp:
-            in_dir = Path(tmp) / "in"
             out_dir = Path(tmp) / "out"
-            in_dir.mkdir()
             out_dir.mkdir()
 
             if not model_is_downloaded(self.model):
                 download_model(self.model, report)
 
-            report(Progress("Extracting frames", 0.05, f"Extracting {v.frame_count} frames..."))
-            self._run_process(
-                [str(FFMPEG), "-y", "-i", str(v.path), "-fps_mode", "passthrough",
-                 "-pix_fmt", "rgb24", str(in_dir / "%08d.png")],
-                report, "Extracting frames", (0.05, 0.25), v.frame_count, watch_dir=in_dir)
+            if v.is_frames:
+                in_dir = v.path  # use the image directory as-is
+                report(Progress("Interpolating", 0.05, f"Using {v.frame_count} frames from {v.path.name}/"))
+            else:
+                in_dir = Path(tmp) / "in"
+                in_dir.mkdir()
+                report(Progress("Extracting frames", 0.05, f"Extracting {v.frame_count} frames..."))
+                self._run_process(
+                    [str(FFMPEG), "-y", "-i", str(v.path), "-fps_mode", "passthrough",
+                     "-pix_fmt", "rgb24", str(in_dir / "%08d.png")],
+                    report, "Extracting frames", (0.05, 0.25), v.frame_count, watch_dir=in_dir)
 
-            in_count = len(os.listdir(in_dir))
+            in_count = len(list_frames(in_dir))
             target = in_count * self.factor
             report(Progress("Interpolating", 0.25, f"Interpolating {in_count} -> {target} frames ({self.model['name']})..."))
             self._run_process(
@@ -200,20 +228,30 @@ class InterpolationJob:
                  "-m", str(RIFE_NCNN_DIR / self.model["dir"]), "-f", "%08d.png"],
                 report, "Interpolating", (0.25, 0.85), target, watch_dir=out_dir)
 
-            new_fps = v.fps * self.factor
-            report(Progress("Encoding", 0.85, f"Encoding at {float(new_fps):.3f} fps..."))
-            cmd = [str(FFMPEG), "-y",
-                   "-framerate", f"{new_fps.numerator}/{new_fps.denominator}",
-                   "-i", str(out_dir / "%08d.png"), "-i", str(v.path),
-                   "-map", "0:v", "-map", "1:a?",
-                   "-c:v", "libx264", "-crf", str(self.crf), "-pix_fmt", "yuv420p",
-                   "-c:a", "copy", str(self.out_path)]
-            self._run_process(cmd, report, "Encoding", (0.85, 1.0), out_frames_expected)
+            if self.out_mode == "png":
+                report(Progress("Exporting frames", 0.85, f"Moving {target} frames to {self.out_path}..."))
+                self.out_path.mkdir(parents=True, exist_ok=True)
+                for f in out_dir.iterdir():
+                    shutil.move(str(f), str(self.out_path / f.name))
+            else:
+                new_fps = v.fps * self.factor
+                report(Progress("Encoding", 0.85, f"Encoding at {float(new_fps):.3f} fps..."))
+                cmd = [str(FFMPEG), "-y",
+                       "-framerate", f"{new_fps.numerator}/{new_fps.denominator}",
+                       "-i", str(out_dir / "%08d.png")]
+                if v.has_audio:
+                    cmd += ["-i", str(v.path), "-map", "0:v", "-map", "1:a?", "-c:a", "copy"]
+                cmd += ["-c:v", "libx264", "-crf", str(self.crf), "-pix_fmt", "yuv420p",
+                        str(self.out_path)]
+                self._run_process(cmd, report, "Encoding", (0.85, 1.0), out_frames_expected)
 
         report(Progress("Done", 1.0, f"Saved: {self.out_path}"))
         return self.out_path
 
 
-def make_out_path(video: VideoInfo, factor: int) -> Path:
+def make_out_path(video: VideoInfo, factor: int, out_mode: str = "mp4") -> Path:
     p = video.path
-    return p.with_name(f"{p.stem}-{factor}x.mp4")
+    stem = p.stem if not video.is_frames else p.name
+    if out_mode == "png":
+        return p.with_name(f"{stem}-{factor}x-frames")
+    return p.with_name(f"{stem}-{factor}x.mp4")
