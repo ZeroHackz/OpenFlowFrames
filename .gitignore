@@ -360,3 +360,12 @@ MigrationBackup/
 *.pkl
 *.bin
 *.param
+
+# Exception: RIFE 4.25/4.26 CUDA weights are bundled because the model
+# download server does not host them (only up to 4.13)
+!Pkgs/rife-cuda/RIFE425/flownet.pkl
+!Pkgs/rife-cuda/RIFE426/flownet.pkl
+
+# Local planning notes & AI agent files
+plan.md
+.claude/

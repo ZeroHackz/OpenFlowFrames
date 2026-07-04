@@ -119,6 +119,20 @@
 	"desc": "v4 General Model",
 	"dir": "RIFE413",
 	"supportsAlpha": "true",
+	"isDefault": "false"
+},
+{
+	"name": "RIFE 4.25",
+	"desc": "v4 General Model",
+	"dir": "RIFE425",
+	"supportsAlpha": "true",
+	"isDefault": "false"
+},
+{
+	"name": "RIFE 4.26",
+	"desc": "Latest v4 General Model",
+	"dir": "RIFE426",
+	"supportsAlpha": "true",
 	"isDefault": "true"
 },
 ]

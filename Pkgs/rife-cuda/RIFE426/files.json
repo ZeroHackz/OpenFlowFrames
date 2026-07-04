@@ -1,0 +1,26 @@
+[
+  {
+    "filename": "flownet.pkl",
+    "dir": "",
+    "size": 24636301,
+    "crc32": "3723828126"
+  },
+  {
+    "filename": "IFNet_HDv3.py",
+    "dir": "\\arch",
+    "size": 6263,
+    "crc32": "4131739370"
+  },
+  {
+    "filename": "refine.py",
+    "dir": "\\arch",
+    "size": 3420,
+    "crc32": "1734899628"
+  },
+  {
+    "filename": "RIFE_HDv3.py",
+    "dir": "\\arch",
+    "size": 3096,
+    "crc32": "995652704"
+  }
+]
