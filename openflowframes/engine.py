@@ -18,12 +18,12 @@ from fractions import Fraction
 from pathlib import Path
 
 def _find_pkgs_dir() -> Path:
-    """Locate the Packages folder: next to a frozen (PyInstaller) exe for portable
+    """Locate the packages folder: next to a frozen (PyInstaller) exe for portable
     builds, otherwise at the repo root two levels up from this file."""
     candidates = []
     if getattr(sys, "frozen", False):
-        candidates.append(Path(sys.executable).resolve().parent / "Packages")
-    candidates.append(Path(__file__).resolve().parents[1] / "Packages")
+        candidates.append(Path(sys.executable).resolve().parent / "packages")
+    candidates.append(Path(__file__).resolve().parents[1] / "packages")
     for c in candidates:
         if (c / "av").is_dir():
             return c

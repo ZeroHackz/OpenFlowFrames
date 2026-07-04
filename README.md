@@ -45,18 +45,18 @@ Run `build-portable.bat`. The result in `dist/` is fully self-contained:
 ```
 dist/
   OpenFlowFramesPortable.exe
-  Packages/av/           (ffmpeg)
-  Packages/rife-ncnn/    (interpolator; models download here on first use)
+  packages/av/           (ffmpeg)
+  packages/rife-ncnn/    (interpolator; models download here on first use)
 ```
 
 Copy the `dist` folder anywhere and double-click the exe.
 
 ## 🛠️ The Original C# App
 
-The full Flowframes WinForms application lives in `Flowframes/` and builds with .NET 8:
+The full Flowframes WinForms application lives in `flowframes/` and builds with .NET 8:
 
 ```bash
-dotnet build Flowframes/Flowframes.csproj
+dotnet build flowframes/Flowframes.csproj
 ```
 
 Note: it expects the [nmkd-utils](https://github.com/Randy420Marsh/nmkd-utils) project as a sibling directory (`../nmkd-utils` relative to the repo root).
