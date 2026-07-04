@@ -26,5 +26,5 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Launching GUI...
-start "" venv\Scripts\pythonw.exe launch.py
+start "" venv\Scripts\pythonw.exe -m core
 exit /b 0

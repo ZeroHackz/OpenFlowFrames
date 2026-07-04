@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Building executable...
-pyinstaller --noconfirm --workpath pybuild OpenFlowFramesPortable.spec
+pyinstaller --noconfirm --workpath pybuild portable/OpenFlowFramesPortable.spec
 if %ERRORLEVEL% NEQ 0 (
     echo Build failed.
     pause

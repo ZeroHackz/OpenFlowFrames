@@ -1,7 +1,0 @@
-OpenFlowFrames Changelog:
-New: Python-only rewrite - removed the legacy C# app for a lean, portable project
-New: CustomTkinter GUI with video or frame-folder input, optional output folder, MP4/PNG output
-New: Automatic normalization of mixed-resolution and alpha/16-bit frames
-New: RIFE NCNN models up to 4.26, auto-downloaded and validated on first use
-New: Portable single-exe build via build-portable.bat, quick start via launcher-gui.bat
-Changed: No monetization - forked from Flowframes by n00mkrad (github.com/n00mkrad/flowframes)

@@ -1,10 +1,13 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
+
+root = os.path.dirname(SPECPATH)  # repo root (spec lives in portable/)
 
 a = Analysis(
-    ['launch.py'],
-    pathex=['venv/Lib/site-packages', '.'],
+    [os.path.join(SPECPATH, 'launch.py')],
+    pathex=[root, os.path.join(root, 'venv', 'Lib', 'site-packages')],
     binaries=[],
-    datas=[('venv/Lib/site-packages/customtkinter', 'customtkinter')],
+    datas=[(os.path.join(root, 'venv', 'Lib', 'site-packages', 'customtkinter'), 'customtkinter')],
     hiddenimports=['customtkinter'],
     hookspath=[],
     hooksconfig={},
