@@ -7,6 +7,7 @@ import json
 import os
 import struct
 import subprocess
+import sys
 import tempfile
 import threading
 import urllib.request
@@ -15,8 +16,20 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-PKGS_DIR = REPO_ROOT / "Pkgs"
+def _find_pkgs_dir() -> Path:
+    """Locate the Pkgs folder: next to a frozen (PyInstaller) exe for portable
+    builds, otherwise at the repo root two levels up from this file."""
+    candidates = []
+    if getattr(sys, "frozen", False):
+        candidates.append(Path(sys.executable).resolve().parent / "Pkgs")
+    candidates.append(Path(__file__).resolve().parents[2] / "Pkgs")
+    for c in candidates:
+        if (c / "av").is_dir():
+            return c
+    return candidates[-1]
+
+
+PKGS_DIR = _find_pkgs_dir()
 AV_DIR = PKGS_DIR / "av"
 RIFE_NCNN_DIR = PKGS_DIR / "rife-ncnn"
 

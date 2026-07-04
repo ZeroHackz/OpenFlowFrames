@@ -4,13 +4,29 @@ Modern CustomTkinter frontend for RIFE video frame interpolation. Uses the bundl
 `Pkgs/av/ffmpeg.exe` and `Pkgs/rife-ncnn/rife-ncnn-vulkan.exe` (works on any Vulkan GPU);
 model weights are downloaded on first use from the Flowframes model server.
 
-## Run
+## Run (from source)
 
 ```
 pip install customtkinter
 cd OpenFlowFramesPy
 python -m openflowframes
 ```
+
+## Portable build
+
+Run `build.bat` — it creates a venv, installs dependencies, builds a single-file
+exe with PyInstaller, and copies the runtime packages (ffmpeg + rife-ncnn-vulkan)
+next to it. The result in `dist/` is self-contained:
+
+```
+dist/
+  OpenFlowFramesPortable.exe
+  Pkgs/av/...
+  Pkgs/rife-ncnn/...
+```
+
+Copy the `dist` folder anywhere and double-click the exe. Model weights are
+downloaded on first use into `Pkgs/rife-ncnn/`.
 
 ## Pipeline
 

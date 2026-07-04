@@ -372,3 +372,8 @@ plan.md
 
 # Runtime-downloaded NCNN model caches
 Pkgs/rife-ncnn/rife-v*/
+
+# Python UI build artifacts
+OpenFlowFramesPy/venv/
+OpenFlowFramesPy/build/
+OpenFlowFramesPy/dist/
