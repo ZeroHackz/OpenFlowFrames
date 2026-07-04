@@ -59,8 +59,8 @@ class VideoInfo:
     fps: Fraction
     frame_count: int
     has_audio: bool
-    is_frames: bool = False    # input is a directory of images instead of a video
-    mixed_sizes: bool = False  # frame folder contains multiple resolutions
+    is_frames: bool = False   # input is a directory of images instead of a video
+    needs_norm: bool = False  # frames have mixed resolutions or non-RGB8 pixel formats
 
     @property
     def fps_float(self) -> float:
@@ -155,32 +155,40 @@ def probe(path: Path) -> VideoInfo:
     return VideoInfo(path, int(video["width"]), int(video["height"]), fps, frames, has_audio)
 
 
-def image_size(path: Path) -> tuple[int, int]:
-    """(width, height) of an image. Reads the PNG header directly; ffprobe otherwise."""
+def image_info(path: Path) -> tuple[int, int, bool]:
+    """(width, height, is_plain_rgb8) of an image. rife-ncnn-vulkan crashes on
+    mixed sizes and produces garbage on alpha/16-bit PNGs, so anything that is
+    not 8-bit RGB needs conversion. Reads the PNG header directly; ffprobe
+    otherwise (JPEG is always 8-bit no-alpha)."""
     if path.suffix.lower() == ".png":
         with open(path, "rb") as f:
-            header = f.read(24)
+            header = f.read(26)
         if header[:8] == b"\x89PNG\r\n\x1a\n" and header[12:16] == b"IHDR":
-            return int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")
+            w = int.from_bytes(header[16:20], "big")
+            h = int.from_bytes(header[20:24], "big")
+            bit_depth, color_type = header[24], header[25]
+            return w, h, (bit_depth == 8 and color_type == 2)  # 2 = truecolor RGB
     first = probe(path)
-    return first.width, first.height
+    is_rgb8 = path.suffix.lower() in (".jpg", ".jpeg")
+    return first.width, first.height, is_rgb8
 
 
 def probe_image_dir(path: Path, fps: float) -> VideoInfo:
     """Treat a directory of images as an input clip at the given framerate.
 
-    If the images have mixed resolutions (rife-ncnn-vulkan crashes on those),
-    the reported size is the most common one; the job rescales the rest to it.
+    Frames that deviate from the most common resolution, or that aren't plain
+    8-bit RGB (alpha channel, 16-bit), are rescaled/converted by the job.
     """
     frames = list_frames(path)
     if not frames:
         raise ValueError(f"No image files ({', '.join(sorted(IMG_EXTS))}) found in {path}")
     from collections import Counter
-    sizes = Counter(image_size(p) for p in frames)
+    infos = [image_info(p) for p in frames]
+    sizes = Counter((w, h) for w, h, _ in infos)
     (w, h), _ = sizes.most_common(1)[0]
     info = VideoInfo(path, w, h, Fraction(fps).limit_denominator(10000),
                      len(frames), has_audio=False, is_frames=True)
-    info.mixed_sizes = len(sizes) > 1
+    info.needs_norm = len(sizes) > 1 or not all(rgb8 for _, _, rgb8 in infos)
     return info
 
 
@@ -232,27 +240,36 @@ class InterpolationJob:
             if not model_is_downloaded(self.model):
                 download_model(self.model, report)
 
-            if v.is_frames and v.mixed_sizes:
-                # rife-ncnn-vulkan crashes on frame pairs with mismatched dimensions,
-                # so rescale outliers to the majority resolution in a temp copy.
+            if v.is_frames and v.needs_norm:
+                # rife-ncnn-vulkan crashes on frame pairs with mismatched dimensions and
+                # produces garbage on alpha/16-bit PNGs - rescale/convert into a temp copy.
                 in_dir = Path(tmp) / "in"
                 in_dir.mkdir()
                 frames = list_frames(v.path)
                 report(Progress("Normalizing frames", 0.05,
-                                f"Mixed resolutions detected - rescaling outliers to {v.width}x{v.height}..."))
-                for i, f in enumerate(frames):
+                                f"Converting frames to {v.width}x{v.height} 8-bit RGB..."))
+                from concurrent.futures import ThreadPoolExecutor
+
+                def normalize(args):
+                    i, f = args
                     self._check_cancel()
                     dest = in_dir / f"{i + 1:08d}.png"
-                    if image_size(f) == (v.width, v.height):
+                    w, h, rgb8 = image_info(f)
+                    if (w, h) == (v.width, v.height) and rgb8:
                         shutil.copyfile(f, dest)
                     else:
                         r = subprocess.run(
                             [str(FFMPEG), "-y", "-i", str(f), "-vf", f"scale={v.width}:{v.height}",
-                             str(dest)],
+                             "-pix_fmt", "rgb24", str(dest)],
                             capture_output=True, creationflags=_CREATE_NO_WINDOW)
                         if r.returncode != 0:
-                            raise RuntimeError(f"Failed to rescale {f.name}: {r.stderr.decode(errors='replace')[-300:]}")
-                    report(Progress("Normalizing frames", 0.05 + 0.20 * (i + 1) / len(frames)))
+                            raise RuntimeError(f"Failed to convert {f.name}: {r.stderr.decode(errors='replace')[-300:]}")
+
+                done = 0
+                with ThreadPoolExecutor(max_workers=4) as pool:
+                    for _ in pool.map(normalize, enumerate(frames)):
+                        done += 1
+                        report(Progress("Normalizing frames", 0.05 + 0.20 * done / len(frames)))
             elif v.is_frames:
                 in_dir = v.path  # use the image directory as-is
                 report(Progress("Interpolating", 0.05, f"Using {v.frame_count} frames from {v.path.name}/"))

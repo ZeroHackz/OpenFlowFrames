@@ -162,7 +162,7 @@ class App(ctk.CTk):
         factor = int(self.factor_menu.get().rstrip("x"))
         out_fps = v.fps_float * factor
         kind = "frames" if v.is_frames else "video"
-        mixed = "  (mixed sizes - will be normalized)" if v.mixed_sizes else ""
+        mixed = "  (frames will be normalized to 8-bit RGB)" if v.needs_norm else ""
         self.info_label.configure(
             text=f"{v.path.name} ({kind})  —  {v.width}x{v.height}, {v.frame_count} frames @ "
                  f"{v.fps_float:.3f} fps  →  {out_fps:.3f} fps{mixed}",
