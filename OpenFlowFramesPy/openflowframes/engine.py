@@ -59,7 +59,8 @@ class VideoInfo:
     fps: Fraction
     frame_count: int
     has_audio: bool
-    is_frames: bool = False  # input is a directory of images instead of a video
+    is_frames: bool = False    # input is a directory of images instead of a video
+    mixed_sizes: bool = False  # frame folder contains multiple resolutions
 
     @property
     def fps_float(self) -> float:
@@ -154,14 +155,33 @@ def probe(path: Path) -> VideoInfo:
     return VideoInfo(path, int(video["width"]), int(video["height"]), fps, frames, has_audio)
 
 
+def image_size(path: Path) -> tuple[int, int]:
+    """(width, height) of an image. Reads the PNG header directly; ffprobe otherwise."""
+    if path.suffix.lower() == ".png":
+        with open(path, "rb") as f:
+            header = f.read(24)
+        if header[:8] == b"\x89PNG\r\n\x1a\n" and header[12:16] == b"IHDR":
+            return int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")
+    first = probe(path)
+    return first.width, first.height
+
+
 def probe_image_dir(path: Path, fps: float) -> VideoInfo:
-    """Treat a directory of images as an input clip at the given framerate."""
+    """Treat a directory of images as an input clip at the given framerate.
+
+    If the images have mixed resolutions (rife-ncnn-vulkan crashes on those),
+    the reported size is the most common one; the job rescales the rest to it.
+    """
     frames = list_frames(path)
     if not frames:
         raise ValueError(f"No image files ({', '.join(sorted(IMG_EXTS))}) found in {path}")
-    first = probe(frames[0])  # ffprobe reads image dimensions too
-    return VideoInfo(path, first.width, first.height, Fraction(fps).limit_denominator(10000),
+    from collections import Counter
+    sizes = Counter(image_size(p) for p in frames)
+    (w, h), _ = sizes.most_common(1)[0]
+    info = VideoInfo(path, w, h, Fraction(fps).limit_denominator(10000),
                      len(frames), has_audio=False, is_frames=True)
+    info.mixed_sizes = len(sizes) > 1
+    return info
 
 
 @dataclass
@@ -186,17 +206,21 @@ class InterpolationJob:
     def _run_process(self, cmd, report, stage, span, total_frames, watch_dir=None):
         """Run a subprocess; if watch_dir given, report progress by counting files in it."""
         start, end = span
-        proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                                creationflags=_CREATE_NO_WINDOW)
-        while proc.poll() is None:
-            self._check_cancel(proc)
-            if watch_dir is not None and total_frames:
-                done = len(os.listdir(watch_dir))
-                frac = start + (end - start) * min(1.0, done / total_frames)
-                report(Progress(stage, frac))
-            threading.Event().wait(0.5)
-        if proc.returncode != 0:
-            raise RuntimeError(f"{stage} failed (exit code {proc.returncode}): {' '.join(map(str, cmd))}")
+        with tempfile.TemporaryFile() as errbuf:
+            proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=errbuf,
+                                    creationflags=_CREATE_NO_WINDOW)
+            while proc.poll() is None:
+                self._check_cancel(proc)
+                if watch_dir is not None and total_frames:
+                    done = len(os.listdir(watch_dir))
+                    frac = start + (end - start) * min(1.0, done / total_frames)
+                    report(Progress(stage, frac))
+                threading.Event().wait(0.5)
+            if proc.returncode != 0:
+                errbuf.seek(0)
+                tail = errbuf.read().decode(errors="replace")[-500:].strip()
+                raise RuntimeError(f"{stage} failed (exit code {proc.returncode}): "
+                                   f"{' '.join(map(str, cmd))}\n{tail}")
 
     def run(self, report) -> Path:
         v = self.video
@@ -208,7 +232,28 @@ class InterpolationJob:
             if not model_is_downloaded(self.model):
                 download_model(self.model, report)
 
-            if v.is_frames:
+            if v.is_frames and v.mixed_sizes:
+                # rife-ncnn-vulkan crashes on frame pairs with mismatched dimensions,
+                # so rescale outliers to the majority resolution in a temp copy.
+                in_dir = Path(tmp) / "in"
+                in_dir.mkdir()
+                frames = list_frames(v.path)
+                report(Progress("Normalizing frames", 0.05,
+                                f"Mixed resolutions detected - rescaling outliers to {v.width}x{v.height}..."))
+                for i, f in enumerate(frames):
+                    self._check_cancel()
+                    dest = in_dir / f"{i + 1:08d}.png"
+                    if image_size(f) == (v.width, v.height):
+                        shutil.copyfile(f, dest)
+                    else:
+                        r = subprocess.run(
+                            [str(FFMPEG), "-y", "-i", str(f), "-vf", f"scale={v.width}:{v.height}",
+                             str(dest)],
+                            capture_output=True, creationflags=_CREATE_NO_WINDOW)
+                        if r.returncode != 0:
+                            raise RuntimeError(f"Failed to rescale {f.name}: {r.stderr.decode(errors='replace')[-300:]}")
+                    report(Progress("Normalizing frames", 0.05 + 0.20 * (i + 1) / len(frames)))
+            elif v.is_frames:
                 in_dir = v.path  # use the image directory as-is
                 report(Progress("Interpolating", 0.05, f"Using {v.frame_count} frames from {v.path.name}/"))
             else:
