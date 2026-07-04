@@ -1,0 +1,2 @@
+# Bundled RIFE model files are CRC32-validated byte-for-byte - no EOL conversion
+packages/rife-ncnn/rife-v*/** -text
