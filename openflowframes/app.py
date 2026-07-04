@@ -40,6 +40,11 @@ class App(ctk.CTk):
             row=0, column=1, padx=(0, 6), pady=10)
         ctk.CTkButton(in_frame, text="Frames Dir...", width=100, command=self.browse_dir).grid(
             row=0, column=2, padx=(0, 10), pady=10)
+        self.out_entry = ctk.CTkEntry(
+            in_frame, placeholder_text="Output folder (optional - defaults to next to the input)")
+        self.out_entry.grid(row=1, column=0, sticky="ew", padx=(10, 6), pady=(0, 10))
+        ctk.CTkButton(in_frame, text="Output Dir...", width=196, command=self.browse_out_dir).grid(
+            row=1, column=1, columnspan=2, sticky="ew", padx=(0, 10), pady=(0, 10))
 
         self.info_label = ctk.CTkLabel(self, text="No video loaded", anchor="w",
                                        text_color="gray70")
@@ -142,6 +147,12 @@ class App(ctk.CTk):
             self.path_entry.insert(0, path)
             self.load_input(Path(path))
 
+    def browse_out_dir(self):
+        path = filedialog.askdirectory(title="Select the output folder")
+        if path:
+            self.out_entry.delete(0, "end")
+            self.out_entry.insert(0, path)
+
     def load_input(self, path: Path):
         try:
             if path.is_dir():
@@ -179,7 +190,11 @@ class App(ctk.CTk):
         model = next(m for m in self.models if m["name"] == self.model_menu.get())
         factor = int(self.factor_menu.get().rstrip("x"))
         out_mode = "png" if self.out_mode_menu.get().startswith("PNG") else "mp4"
-        out_path = engine.make_out_path(self.video, factor, out_mode)
+        out_dir = self.out_entry.get().strip() or None
+        if out_dir and not Path(out_dir).is_dir():
+            self.log(f"Output folder does not exist: {out_dir}")
+            return
+        out_path = engine.make_out_path(self.video, factor, out_mode, out_dir)
         self.job = engine.InterpolationJob(self.video, model, factor, out_path,
                                            crf=int(self.crf_slider.get()), out_mode=out_mode)
         self.run_btn.configure(state="disabled")

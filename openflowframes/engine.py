@@ -311,9 +311,10 @@ class InterpolationJob:
         return self.out_path
 
 
-def make_out_path(video: VideoInfo, factor: int, out_mode: str = "mp4") -> Path:
+def make_out_path(video: VideoInfo, factor: int, out_mode: str = "mp4",
+                  out_dir: "Path | None" = None) -> Path:
+    """Output path for a job. Goes next to the input unless out_dir is given."""
     p = video.path
     stem = p.stem if not video.is_frames else p.name
-    if out_mode == "png":
-        return p.with_name(f"{stem}-{factor}x-frames")
-    return p.with_name(f"{stem}-{factor}x.mp4")
+    name = f"{stem}-{factor}x-frames" if out_mode == "png" else f"{stem}-{factor}x.mp4"
+    return (Path(out_dir) if out_dir else p.parent) / name
