@@ -369,3 +369,6 @@ MigrationBackup/
 # Local planning notes & AI agent files
 plan.md
 .claude/
+
+# Runtime-downloaded NCNN model caches
+Pkgs/rife-ncnn/rife-v*/
