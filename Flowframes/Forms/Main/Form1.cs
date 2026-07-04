@@ -157,7 +157,6 @@ namespace Flowframes.Forms.Main
                 Task.Run(() => Updater.UpdateModelList());
                 Task.Run(() => Updater.AsyncUpdateCheck());
                 Task.Run(() => GetWebInfo.LoadNews(newsLabel));
-                Task.Run(() => GetWebInfo.LoadPatronListCsv(patronsLabel));
                 Task.Run(() => Servers.Init());
                 await Python.CheckCompression();
                 await StartupChecks.SymlinksCheck();
@@ -641,16 +640,6 @@ namespace Flowframes.Forms.Main
         private void discordBtn_Click(object sender, EventArgs e)
         {
             Process.Start("https://discord.gg/eJHD2NSJRe");
-        }
-
-        private void paypalBtn_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://www.paypal.com/paypalme/nmkd/10");
-        }
-
-        private void patreonBtn_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://patreon.com/n00mkrad");
         }
 
         private void settingsBtn_Click(object sender, EventArgs e)

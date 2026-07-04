@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdaterForm));
             this.titleLabel = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.updatePatreonBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.installedLabel = new System.Windows.Forms.Label();
@@ -64,21 +63,7 @@
             this.label13.Size = new System.Drawing.Size(110, 16);
             this.label13.TabIndex = 35;
             this.label13.Text = "Installed Version:";
-            // 
-            // updatePatreonBtn
-            // 
-            this.updatePatreonBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.updatePatreonBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.updatePatreonBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.updatePatreonBtn.ForeColor = System.Drawing.Color.White;
-            this.updatePatreonBtn.Location = new System.Drawing.Point(12, 229);
-            this.updatePatreonBtn.Name = "updatePatreonBtn";
-            this.updatePatreonBtn.Size = new System.Drawing.Size(203, 40);
-            this.updatePatreonBtn.TabIndex = 36;
-            this.updatePatreonBtn.Text = "Download Patreon Version";
-            this.updatePatreonBtn.UseVisualStyleBackColor = true;
-            this.updatePatreonBtn.Click += new System.EventHandler(this.updatePatreonBtn_Click);
-            // 
+            //
             // label1
             // 
             this.label1.AutoSize = true;
@@ -156,11 +141,11 @@
             this.updateFreeBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.updateFreeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.updateFreeBtn.ForeColor = System.Drawing.Color.White;
-            this.updateFreeBtn.Location = new System.Drawing.Point(221, 229);
+            this.updateFreeBtn.Location = new System.Drawing.Point(12, 229);
             this.updateFreeBtn.Name = "updateFreeBtn";
             this.updateFreeBtn.Size = new System.Drawing.Size(203, 40);
             this.updateFreeBtn.TabIndex = 43;
-            this.updateFreeBtn.Text = "Download Free Version";
+            this.updateFreeBtn.Text = "Download Latest Version";
             this.updateFreeBtn.UseVisualStyleBackColor = true;
             this.updateFreeBtn.Click += new System.EventHandler(this.updateFreeBtn_Click);
             // 
@@ -177,7 +162,6 @@
             this.Controls.Add(this.installedLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.updatePatreonBtn);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.titleLabel);
             this.ForeColor = System.Drawing.Color.White;
@@ -196,7 +180,6 @@
 
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Button updatePatreonBtn;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label installedLabel;

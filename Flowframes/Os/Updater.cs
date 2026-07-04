@@ -132,10 +132,9 @@ namespace Flowframes.Os
         public static async Task AsyncUpdateCheck()
         {
             Version installed = GetInstalledVer();
-            Version latestPat = GetLatestVer(true);
             Version latestFree = GetLatestVer(false);
 
-            Logger.Log($"You are running Flowframes {installed}. The latest Patreon version is {latestPat}, the latest free version is {latestFree}.");
+            Logger.Log($"You are running Flowframes {installed}. The latest version is {latestFree}.");
 
             string gpus = OsUtils.GetGpus();
 

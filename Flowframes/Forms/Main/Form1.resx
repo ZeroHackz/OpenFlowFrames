@@ -118,7 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label14.Text" xml:space="preserve">
-    <value>Flowframes - Created by n00mkrad aka nmkd
+    <value>OpenFlowFrames - Maintained by ZeroHackz
+
+Forked from Flowframes by n00mkrad (github.com/n00mkrad/flowframes)
 
 Based on:
 - RIFE by hzwer

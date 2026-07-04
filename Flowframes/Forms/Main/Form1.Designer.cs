@@ -71,9 +71,6 @@
             pictureBox5 = new PictureBox();
             welcomeTab = new TabPage();
             welcomeLabel2 = new Label();
-            panel8 = new Panel();
-            patronsLabel = new Label();
-            label21 = new Label();
             panel6 = new Panel();
             newsLabel = new Label();
             label15 = new Label();
@@ -138,7 +135,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
-            panel8.SuspendLayout();
             panel6.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             completionActionPanel.SuspendLayout();
@@ -594,41 +590,7 @@
             welcomeLabel2.TabIndex = 5;
             welcomeLabel2.Text = "Click The Interpolation Tab To Begin.";
             welcomeLabel2.Click += welcomeLabel2_Click;
-            // 
-            // panel8
-            // 
-            panel8.AutoScroll = true;
-            panel8.BackColor = Color.FromArgb(64, 64, 64);
-            panel8.Controls.Add(patronsLabel);
-            panel8.Controls.Add(label21);
-            panel8.Location = new Point(593, 57);
-            panel8.Margin = new Padding(5);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(300, 193);
-            panel8.TabIndex = 4;
-            // 
-            // patronsLabel
-            // 
-            patronsLabel.AutoSize = true;
-            patronsLabel.ForeColor = Color.White;
-            patronsLabel.Location = new Point(8, 31);
-            patronsLabel.Margin = new Padding(8, 8, 3, 0);
-            patronsLabel.Name = "patronsLabel";
-            patronsLabel.Size = new Size(0, 15);
-            patronsLabel.TabIndex = 9;
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label21.ForeColor = Color.White;
-            label21.Location = new Point(8, 8);
-            label21.Margin = new Padding(8, 8, 3, 0);
-            label21.Name = "label21";
-            label21.Size = new Size(119, 15);
-            label21.TabIndex = 8;
-            label21.Text = "Patreon Supporters:";
-            // 
+            //
             // panel6
             // 
             panel6.AutoScroll = true;
@@ -638,7 +600,7 @@
             panel6.Location = new Point(8, 57);
             panel6.Margin = new Padding(5);
             panel6.Name = "panel6";
-            panel6.Size = new Size(575, 193);
+            panel6.Size = new Size(885, 193);
             panel6.TabIndex = 3;
             // 
             // newsLabel
@@ -1333,7 +1295,6 @@
             // 
             tabPageWelcome.BackColor = Color.FromArgb(48, 48, 48);
             tabPageWelcome.Controls.Add(welcomeLabel2);
-            tabPageWelcome.Controls.Add(panel8);
             tabPageWelcome.Controls.Add(panel6);
             tabPageWelcome.Controls.Add(label11);
             tabPageWelcome.ForeColor = Color.White;
@@ -1416,8 +1377,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
-            panel8.ResumeLayout(false);
-            panel8.PerformLayout();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
@@ -1487,8 +1446,6 @@
         private System.Windows.Forms.Label label23;
         private HTAlt.WinForms.HTProgressBar longProgBar;
         private HTAlt.WinForms.HTButton discordBtn;
-        private HTAlt.WinForms.HTButton paypalBtn;
-        private HTAlt.WinForms.HTButton patreonBtn;
         private HTAlt.WinForms.HTButton settingsBtn;
         private HTAlt.WinForms.HTButton browseOutBtn;
         private HTAlt.WinForms.HTButton browseInputFileBtn;
@@ -1501,9 +1458,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Panel panel8;
-        private System.Windows.Forms.Label patronsLabel;
-        private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label newsLabel;
         private System.Windows.Forms.Label welcomeLabel2;
         private System.Windows.Forms.Button runStepBtn;
