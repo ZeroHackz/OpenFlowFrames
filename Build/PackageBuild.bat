@@ -18,14 +18,14 @@ mkdir "FlowframesApp%ver%/FlowframesData"
 mkdir "FlowframesApp%ver%/FlowframesData/pkgs"
 
 rem xcopy "../../../pkgs" "FlowframesApp%ver%/FlowframesData\pkgs\" /E
-xcopy "../../../pkgs/av" "FlowframesApp%ver%/FlowframesData\pkgs\av" /E /I
-xcopy "../../../pkgs/dain-ncnn" "FlowframesApp%ver%/FlowframesData\pkgs\dain-ncnn" /E /I
-xcopy "../../../pkgs/licenses" "FlowframesApp%ver%/FlowframesData\pkgs\licenses" /E /I
-xcopy "../../../pkgs/rife-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\rife-cuda" /E /I
-xcopy "../../../pkgs/rife-ncnn" "FlowframesApp%ver%/FlowframesData\pkgs\rife-ncnn" /E /I
-xcopy "../../../pkgs/flavr-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\flavr-cuda" /E /I
-xcopy "../../../pkgs/xvfi-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\xvfi-cuda" /E /I
-xcopy "../../../pkgs/rife-ncnn-vs" "FlowframesApp%ver%/FlowframesData\pkgs\rife-ncnn-vs" /E /I
+xcopy "../../../packages/av" "FlowframesApp%ver%/FlowframesData\pkgs\av" /E /I
+xcopy "../../../packages/dain-ncnn" "FlowframesApp%ver%/FlowframesData\pkgs\dain-ncnn" /E /I
+xcopy "../../../packages/licenses" "FlowframesApp%ver%/FlowframesData\pkgs\licenses" /E /I
+xcopy "../../../packages/rife-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\rife-cuda" /E /I
+xcopy "../../../packages/rife-ncnn" "FlowframesApp%ver%/FlowframesData\pkgs\rife-ncnn" /E /I
+xcopy "../../../packages/flavr-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\flavr-cuda" /E /I
+xcopy "../../../packages/xvfi-cuda" "FlowframesApp%ver%/FlowframesData\pkgs\xvfi-cuda" /E /I
+xcopy "../../../packages/rife-ncnn-vs" "FlowframesApp%ver%/FlowframesData\pkgs\rife-ncnn-vs" /E /I
 
 echo %ver% >> "FlowframesApp%ver%/FlowframesData/ver.ini"
 

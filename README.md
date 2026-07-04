@@ -45,8 +45,8 @@ Run `build-portable.bat`. The result in `dist/` is fully self-contained:
 ```
 dist/
   OpenFlowFramesPortable.exe
-  Pkgs/av/           (ffmpeg)
-  Pkgs/rife-ncnn/    (interpolator; models download here on first use)
+  Packages/av/           (ffmpeg)
+  Packages/rife-ncnn/    (interpolator; models download here on first use)
 ```
 
 Copy the `dist` folder anywhere and double-click the exe.

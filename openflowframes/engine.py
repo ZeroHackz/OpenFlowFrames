@@ -18,21 +18,21 @@ from fractions import Fraction
 from pathlib import Path
 
 def _find_pkgs_dir() -> Path:
-    """Locate the Pkgs folder: next to a frozen (PyInstaller) exe for portable
+    """Locate the Packages folder: next to a frozen (PyInstaller) exe for portable
     builds, otherwise at the repo root two levels up from this file."""
     candidates = []
     if getattr(sys, "frozen", False):
-        candidates.append(Path(sys.executable).resolve().parent / "Pkgs")
-    candidates.append(Path(__file__).resolve().parents[1] / "Pkgs")
+        candidates.append(Path(sys.executable).resolve().parent / "Packages")
+    candidates.append(Path(__file__).resolve().parents[1] / "Packages")
     for c in candidates:
         if (c / "av").is_dir():
             return c
     return candidates[-1]
 
 
-PKGS_DIR = _find_pkgs_dir()
-AV_DIR = PKGS_DIR / "av"
-RIFE_NCNN_DIR = PKGS_DIR / "rife-ncnn"
+PACKAGES_DIR = _find_pkgs_dir()
+AV_DIR = PACKAGES_DIR / "av"
+RIFE_NCNN_DIR = PACKAGES_DIR / "rife-ncnn"
 
 FFMPEG = AV_DIR / "ffmpeg.exe"
 FFPROBE = AV_DIR / "ffprobe.exe"

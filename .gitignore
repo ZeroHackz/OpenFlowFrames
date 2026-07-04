@@ -193,12 +193,8 @@ PublishScripts/
 *.nupkg
 # NuGet Symbol Packages
 *.snupkg
-# The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
-# except build/, which is used as an MSBuild target.
-!**/[Pp]ackages/build/
-# Uncomment if necessary however generally it will be regenerated when needed
-#!**/[Pp]ackages/repositories.config
+# (NuGet local packages-folder rule removed: this repo uses PackageReference,
+# and the rule would swallow our top-level Packages/ directory)
 # NuGet v3's project.json files produces more ignorable files
 *.nuget.props
 *.nuget.targets
@@ -363,15 +359,15 @@ MigrationBackup/
 
 # Exception: RIFE 4.25/4.26 CUDA weights are bundled because the model
 # download server does not host them (only up to 4.13)
-!Pkgs/rife-cuda/RIFE425/flownet.pkl
-!Pkgs/rife-cuda/RIFE426/flownet.pkl
+!Packages/rife-cuda/RIFE425/flownet.pkl
+!Packages/rife-cuda/RIFE426/flownet.pkl
 
 # Local planning notes & AI agent files
 plan.md
 .claude/
 
 # Runtime-downloaded NCNN model caches
-Pkgs/rife-ncnn/rife-v*/
+Packages/rife-ncnn/rife-v*/
 
 # Python UI build artifacts ("pybuild" is the PyInstaller workpath; a plain
 # "build/" pattern would also ignore the C# Build/ dir on case-insensitive FS)
