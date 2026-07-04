@@ -11,7 +11,6 @@ import subprocess
 import sys
 import tempfile
 import threading
-import urllib.request
 import zlib
 from dataclasses import dataclass, field
 from fractions import Fraction
@@ -37,8 +36,6 @@ RIFE_NCNN_DIR = PACKAGES_DIR / "rife-ncnn"
 FFMPEG = AV_DIR / "ffmpeg.exe"
 FFPROBE = AV_DIR / "ffprobe.exe"
 RIFE_EXE = RIFE_NCNN_DIR / "rife-ncnn-vulkan.exe"
-
-MODEL_SERVER = "https://dl.nmkd-hz.de/flowframes/mdl/rife-ncnn"
 
 # Hide subprocess consoles on Windows
 _CREATE_NO_WINDOW = 0x08000000 if os.name == "nt" else 0
@@ -104,7 +101,8 @@ def default_model(models: list[dict]) -> dict:
     return models[-1]
 
 
-def model_is_downloaded(model: dict) -> bool:
+def model_files_valid(model: dict) -> bool:
+    """Model weights ship with the repo; validate size + CRC32 against files.json."""
     mdl_dir = RIFE_NCNN_DIR / model["dir"]
     files_json = mdl_dir / "files.json"
     if not files_json.is_file():
@@ -114,31 +112,11 @@ def model_is_downloaded(model: dict) -> bool:
             f = mdl_dir / entry["dir"].strip("\\/") / entry["filename"]
             if not f.is_file() or f.stat().st_size != int(entry["size"]):
                 return False
+            if _ff_crc32(f.read_bytes()) != str(entry["crc32"]).strip():
+                return False
     except (OSError, ValueError, KeyError):
         return False
     return True
-
-
-def download_model(model: dict, report) -> None:
-    """Fetch model files from the Flowframes model server (files.json index + files)."""
-    mdl_dir = RIFE_NCNN_DIR / model["dir"]
-    mdl_dir.mkdir(parents=True, exist_ok=True)
-    base = f"{MODEL_SERVER}/{model['dir']}"
-    report(Progress("Downloading model", 0.0, f"Downloading '{model['name']}' from {base}"))
-    with urllib.request.urlopen(f"{base}/files.json", timeout=30) as r:
-        index = json.loads(r.read().decode("utf-8"))
-    (mdl_dir / "files.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
-    for i, entry in enumerate(index):
-        rel = Path(entry["dir"].strip("\\/")) / entry["filename"]
-        dest = mdl_dir / rel
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        url = f"{base}/{str(rel).replace(os.sep, '/')}"
-        with urllib.request.urlopen(url, timeout=60) as r:
-            data = r.read()
-        if len(data) != int(entry["size"]) or _ff_crc32(data) != str(entry["crc32"]).strip():
-            raise RuntimeError(f"Downloaded file {entry['filename']} failed validation")
-        dest.write_bytes(data)
-        report(Progress("Downloading model", (i + 1) / len(index), f"Downloaded {entry['filename']}"))
 
 
 def probe(path: Path) -> VideoInfo:
@@ -237,8 +215,11 @@ class InterpolationJob:
             out_dir = Path(tmp) / "out"
             out_dir.mkdir()
 
-            if not model_is_downloaded(self.model):
-                download_model(self.model, report)
+            if not model_files_valid(self.model):
+                raise RuntimeError(
+                    f"Model files for '{self.model['name']}' are missing or corrupt in "
+                    f"{RIFE_NCNN_DIR / self.model['dir']} - re-clone the repository or "
+                    f"restore the packages folder.")
 
             if v.is_frames and v.needs_norm:
                 # rife-ncnn-vulkan crashes on frame pairs with mismatched dimensions and

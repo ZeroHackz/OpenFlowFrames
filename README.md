@@ -12,7 +12,7 @@ This fork is a **lean, fully free and open** reimagining: a modern Python GUI ar
 
 ## ✨ Features
 
-*   **Latest RIFE Models:** RIFE up to 4.26, downloaded and validated automatically on first use.
+*   **Latest RIFE Models:** RIFE 4.9 through 4.26 bundled in the repo — no external model server, fully self-contained.
 *   **Any GPU:** Runs on AMD, Intel, and NVIDIA via `rife-ncnn-vulkan` — no CUDA or PyTorch required.
 *   **Modern GUI:** A clean CustomTkinter dark-mode interface — no install needed beyond Python.
 *   **Video or Frame-Folder Input:** Interpolate a video file, or a directory of PNG/JPG/WebP frames with a custom input framerate.
@@ -39,7 +39,7 @@ Run `build-portable.bat`. The result in `dist/` is fully self-contained:
 dist/
   OpenFlowFramesPortable.exe
   packages/av/           (ffmpeg)
-  packages/rife-ncnn/    (interpolator; models download here on first use)
+  packages/rife-ncnn/    (interpolator + bundled RIFE models)
 ```
 
 Copy the `dist` folder anywhere and double-click the exe.

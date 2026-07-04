@@ -7,11 +7,6 @@ venv/
 pybuild/
 dist/
 
-# Runtime-downloaded NCNN model weights
-packages/rife-ncnn/rife-v*/
-*.bin
-*.param
-
 # Local planning notes & AI agent files
 plan.md
 .claude/
