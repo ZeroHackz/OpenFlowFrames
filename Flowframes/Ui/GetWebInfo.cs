@@ -13,7 +13,7 @@ namespace Flowframes.Ui
         {
             try
             {
-                string url = $"https://raw.githubusercontent.com/n00mkrad/flowframes/main/changelog.txt";
+                string url = $"https://raw.githubusercontent.com/ZeroHackz/OpenFlowFrames/main/changelog.txt";
                 var client = new WebClient();
                 var str = await client.DownloadStringTaskAsync(new Uri(url));
                 newsLabel.Text = str;

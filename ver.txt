@@ -1,4 +1,4 @@
 1.42.0
-https://www.patreon.com/posts/149448002
-1.36.0
-https://nmkd.itch.io/flowframes
+https://github.com/ZeroHackz/OpenFlowFrames/releases
+1.42.0
+https://github.com/ZeroHackz/OpenFlowFrames/releases
