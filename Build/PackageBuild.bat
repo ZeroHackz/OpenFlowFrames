@@ -10,7 +10,7 @@ set /p packSlim="Package Slim (no Pytorch) archive? (Y/N) "
 set /p packFull="Package Full (with Pytorch for Ampere and older) archive? (Y/N) "
 set /p packWebBase="Package web installer (base.7z) file? (Y/N) "
 
-cd /D ..\CodeLegacy\bin\packed
+cd /D ..\Flowframes\bin\packed
 
 rmdir /s/q FlowframesApp%ver%
 mkdir "FlowframesApp%ver%"
@@ -35,13 +35,13 @@ xcopy Magick.Native-Q8-x64.dll "FlowframesApp%ver%"
 
 cd /D ../../../Build
 
-rmdir /s/q ..\CodeLegacy\bin\packed\FlowframesApp%ver%\FlowframesData\logs
-del ..\CodeLegacy\bin\packed\FlowframesApp%ver%\FlowframesData\config.ini
+rmdir /s/q ..\Flowframes\bin\packed\FlowframesApp%ver%\FlowframesData\logs
+del ..\Flowframes\bin\packed\FlowframesApp%ver%\FlowframesData\config.ini
 
 
 IF /I "%packSlim%"=="Y" (
 	rem PACK SLIM
-	7za.exe a FF-%ver%-Slim.7z -m0=flzma2 -mx5 "..\CodeLegacy\bin\packed\FlowframesApp%ver%"
+	7za.exe a FF-%ver%-Slim.7z -m0=flzma2 -mx5 "..\Flowframes\bin\packed\FlowframesApp%ver%"
 )
 
 echo 1
@@ -49,16 +49,16 @@ IF /I "%packWebBase%"=="Y" (
 	echo 2
 	rem PACK WEB BASE
 	rem mkdir "WebInstaller/%ver%/base.7z"
-	7za.exe a "WebInstaller/%ver%/base.7z" -m0=flzma2 -mx7 "..\CodeLegacy\bin\packed\FlowframesApp%ver%\*"
+	7za.exe a "WebInstaller/%ver%/base.7z" -m0=flzma2 -mx7 "..\Flowframes\bin\packed\FlowframesApp%ver%\*"
 )
 
 IF /I "%packFull%"=="Y" (
-	xcopy "../pkgs/py-amp" "..\CodeLegacy\bin\packed\FlowframesApp%ver%\FlowframesData\pkgs\py-amp" /E /I
-	7za.exe a FF-%ver%-Full-RTX3000.7z -m0=flzma2 -mx7 "..\CodeLegacy\bin\packed\FlowframesApp%ver%"
-	rmdir /s/q ..\CodeLegacy\bin\packed\FlowframesApp%ver%\FlowframesData\pkgs\py-amp
+	xcopy "../pkgs/py-amp" "..\Flowframes\bin\packed\FlowframesApp%ver%\FlowframesData\pkgs\py-amp" /E /I
+	7za.exe a FF-%ver%-Full-RTX3000.7z -m0=flzma2 -mx7 "..\Flowframes\bin\packed\FlowframesApp%ver%"
+	rmdir /s/q ..\Flowframes\bin\packed\FlowframesApp%ver%\FlowframesData\pkgs\py-amp
 )
 
-rmdir /s/q ..\CodeLegacy\bin\packed\FlowframesApp%ver%
+rmdir /s/q ..\Flowframes\bin\packed\FlowframesApp%ver%
 
 
 rem pause

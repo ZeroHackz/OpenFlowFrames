@@ -6,7 +6,7 @@ model weights are downloaded on first use from the Flowframes model server.
 
 ## Quick launch
 
-Double-click `launcher-gui.bat` — it creates a venv and installs dependencies on
+Double-click `launcher-gui.bat` (repo root) — it creates a venv and installs dependencies on
 first run, then starts the GUI (no console window). Or run from source manually:
 
 ```
@@ -17,7 +17,7 @@ python -m openflowframes
 
 ## Portable build
 
-Run `build-portable.bat` — it creates a venv, installs dependencies, builds a single-file
+Run `build-portable.bat` (repo root) — it creates a venv, installs dependencies, builds a single-file
 exe with PyInstaller, and copies the runtime packages (ffmpeg + rife-ncnn-vulkan)
 next to it. The result in `dist/` is self-contained:
 

@@ -1,5 +1,5 @@
 @echo off
-cd /d "%~dp0"
+cd /d "%~dp0OpenFlowFramesPy"
 echo Building OpenFlowFrames portable executable...
 
 REM Create virtual environment if missing

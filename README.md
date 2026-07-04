@@ -36,11 +36,11 @@ This fork includes all the powerful core features of the original, plus:
     ```bash
     git clone https://github.com/ZeroHackz/OpenFlowFrames.git
     ```
-2.  Double-click `OpenFlowFramesPy/launcher-gui.bat` — it sets up a virtual environment on first run and launches the GUI.
+2.  Double-click `launcher-gui.bat` (repo root) — it sets up a virtual environment on first run and launches the GUI.
 
 **Portable build:**
 
-Run `OpenFlowFramesPy/build-portable.bat`. The result in `OpenFlowFramesPy/dist/` is fully self-contained:
+Run `build-portable.bat` (repo root). The result in `OpenFlowFramesPy/dist/` is fully self-contained:
 
 ```
 dist/
