@@ -1,4 +1,0 @@
-# Bundled RIFE model packages: files.json contains size/CRC32 checks over these
-# exact bytes, so line-ending conversion must never touch them.
-packages/rife-cuda/RIFE425/** -text
-packages/rife-cuda/RIFE426/** -text

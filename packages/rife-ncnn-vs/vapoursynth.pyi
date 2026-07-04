@@ -1,1 +1,0 @@
-C:\Users\anato\Documents\Vapoursynth-Projekte\vapoursynth-portable-FATPACK-21-10\VapourSynth64Portable\VapourSynth64\python.exe: can't open file 'C:\Users\anato\Documents\Vapoursynth-Projekte\vapoursynth-portable-FATPACK-21-10\VapourSynth64Portable\VapourSynth64\vsgenstubs4\__init__.py': [Errno 2] No such file or directory

@@ -1,6 +1,7 @@
 OpenFlowFrames Changelog:
-New: RIFE 4.25 and 4.26 models for the CUDA (PyTorch) backend, bundled with the app
-New: OpenFlowFramesPy - modern CustomTkinter GUI (video or frame-folder input, MP4/PNG output)
+New: Python-only rewrite - removed the legacy C# app for a lean, portable project
+New: CustomTkinter GUI with video or frame-folder input, optional output folder, MP4/PNG output
+New: Automatic normalization of mixed-resolution and alpha/16-bit frames
+New: RIFE NCNN models up to 4.26, auto-downloaded and validated on first use
 New: Portable single-exe build via build-portable.bat, quick start via launcher-gui.bat
-Changed: Removed Patreon/PayPal integrations; updates now point to GitHub releases
-Changed: Forked from Flowframes by n00mkrad (github.com/n00mkrad/flowframes)
+Changed: No monetization - forked from Flowframes by n00mkrad (github.com/n00mkrad/flowframes)

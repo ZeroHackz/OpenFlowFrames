@@ -1,3 +1,0 @@
-FLAVR 2x - Official model, only works for 2x interpolation
-FLAVR 4x - Official model, only works for 4x interpolation
-FLAVR 8x - Official model, only works for 8x interpolation
