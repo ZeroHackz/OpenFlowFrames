@@ -23,7 +23,7 @@ def _find_pkgs_dir() -> Path:
     candidates = []
     if getattr(sys, "frozen", False):
         candidates.append(Path(sys.executable).resolve().parent / "Pkgs")
-    candidates.append(Path(__file__).resolve().parents[2] / "Pkgs")
+    candidates.append(Path(__file__).resolve().parents[1] / "Pkgs")
     for c in candidates:
         if (c / "av").is_dir():
             return c

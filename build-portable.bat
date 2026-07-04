@@ -1,5 +1,5 @@
 @echo off
-cd /d "%~dp0OpenFlowFramesPy"
+cd /d "%~dp0"
 echo Building OpenFlowFrames portable executable...
 
 REM Create virtual environment if missing
@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Building executable...
-pyinstaller --noconfirm OpenFlowFramesPortable.spec
+pyinstaller --noconfirm --workpath pybuild OpenFlowFramesPortable.spec
 if %ERRORLEVEL% NEQ 0 (
     echo Build failed.
     pause
@@ -39,8 +39,8 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo Copying runtime packages (ffmpeg + rife-ncnn-vulkan) next to the exe...
-xcopy /E /I /Y /Q "..\Pkgs\av" "dist\Pkgs\av" >nul
-xcopy /E /I /Y /Q "..\Pkgs\rife-ncnn" "dist\Pkgs\rife-ncnn" >nul
+xcopy /E /I /Y /Q "Pkgs\av" "dist\Pkgs\av" >nul
+xcopy /E /I /Y /Q "Pkgs\rife-ncnn" "dist\Pkgs\rife-ncnn" >nul
 if %ERRORLEVEL% NEQ 0 (
     echo Failed to copy runtime packages.
     pause

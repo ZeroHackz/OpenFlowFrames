@@ -373,7 +373,8 @@ plan.md
 # Runtime-downloaded NCNN model caches
 Pkgs/rife-ncnn/rife-v*/
 
-# Python UI build artifacts
-OpenFlowFramesPy/venv/
-OpenFlowFramesPy/build/
-OpenFlowFramesPy/dist/
+# Python UI build artifacts ("pybuild" is the PyInstaller workpath; a plain
+# "build/" pattern would also ignore the C# Build/ dir on case-insensitive FS)
+venv/
+pybuild/
+dist/

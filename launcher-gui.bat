@@ -1,5 +1,5 @@
 @echo off
-cd /d "%~dp0OpenFlowFramesPy"
+cd /d "%~dp0"
 echo OpenFlowFrames Launcher
 
 REM Create virtual environment if missing
